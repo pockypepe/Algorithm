@@ -6,11 +6,10 @@ import java.util.PriorityQueue;
 public class Main {
 	public static void main(String[] args) throws NumberFormatException, IOException {
 		PriorityQueue<Integer> pq = new PriorityQueue<>((o1, o2) -> {
-			if (Math.abs(o1) < Math.abs(o2)) return -1;
-			else if (Math.abs(o1) > Math.abs(o2)) return 1;
-			else {
-				if (o1 < o2) return -1;
-				else return 1;
+			if(Math.abs(o1) != Math.abs(o2)) {
+				return Math.abs(o1) - Math.abs(o2);
+			}else {
+				return o1 - o2;
 			}
 		});
 		
