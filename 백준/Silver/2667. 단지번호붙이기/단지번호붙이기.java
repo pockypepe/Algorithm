@@ -48,14 +48,14 @@ public class Main {
 		int danji = 0;
 		while (!q.isEmpty()) {
 			int[] temp = q.poll();
-			
+			if (visited[temp[0]][temp[1]]) continue;
+            visited[temp[0]][temp[1]] = true;
+            danji++;
 			for (int i = 0; i < 4; i++) {
 				int nx = temp[0] + dx[i];
 				int ny = temp[1] + dy[i];
 				if (isInRange(nx, ny) && map[nx][ny].equals("1") && !visited[nx][ny]) {
-					visited[nx][ny] = true;
 					q.offer(new int[] {nx, ny});
-					danji++;
 				}
 			}
 		}
