@@ -1,35 +1,25 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 public class Main {
-	static int[] dpZero, dpOne;
-	
-	public static void main(String[] args) throws NumberFormatException, IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int T = Integer.parseInt(br.readLine());
-		for (int t = 0; t < T; t++) {
-			int n = Integer.parseInt(br.readLine());
-			dpZero = new int[n + 1];
-			dpOne = new int[n + 1];
-			
-			System.out.println(fiboZero(n) + " " + fiboOne(n));
-		}
-	}
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringBuilder sb = new StringBuilder();
+        int T = Integer.parseInt(br.readLine());
 
-	private static int fiboOne(int n) {
-		if (n == 0) return 0;
-		if (n == 1) return 1;
-		if (dpOne[n] != 0) return dpOne[n];
-		dpOne[n] = fiboOne(n - 1) + fiboOne(n - 2);
-		return dpOne[n];
-	}
+        int[][] dp = new int[41][];
 
-	private static int fiboZero(int n) {
-		if (n == 0) return 1;
-		if (n == 1) return 0;		
-		if (dpZero[n] != 0) return dpZero[n];
-		dpZero[n] = fiboZero(n - 1) + fiboZero(n - 2);
-		return dpZero[n];
-	}
+        dp[0] = new int[] {1, 0};
+        dp[1] = new int[] {0, 1};
+
+        for (int i = 2; i < 41; i++) {
+            dp[i] = new int[] {dp[i - 1][0] + dp[i - 2][0], dp[i - 1][1] + dp[i - 2][1]};
+        }
+
+        for (int i = 0; i < T; i++) {
+            int N = Integer.parseInt(br.readLine());
+            sb.append(dp[N][0]).append(" ").append(dp[N][1]).append("\n");
+        }
+
+        System.out.println(sb.toString());
+    }
 }
