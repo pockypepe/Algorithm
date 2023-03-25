@@ -5,16 +5,18 @@ import java.io.InputStreamReader;
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int ans = 0;
-
         String[] input = br.readLine().split("-");
-        for (String string : input[0].split("\\+")) {
-            ans += Integer.parseInt(string);
+        int[] num = new int[input.length];
+        int idx = 0;
+        for (String s : input) {
+            String[] temp = s.split("\\+");
+            int sum = 0;
+            for (String t : temp) sum += Integer.parseInt(t);
+            num[idx++] = sum;
         }
 
-        for (int i = 1; i < input.length; i++) {
-            for (String string : input[i].split("\\+")) ans -= Integer.parseInt(string);
-        }
+        int ans = num[0] * 2;
+        for (int i : num) ans -= i;
 
         System.out.println(ans);
     }
