@@ -2,70 +2,65 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
-	static int N, M, V;
-	static int[][] map;
-	static boolean[] visited;
-	static Queue<Integer> queue = new ArrayDeque<>();
-	static StringBuilder sb;
-	
-	public static void main(String[] args) throws IOException {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
-		sb = new StringBuilder();
-		
-		N = Integer.parseInt(st.nextToken());
-		M = Integer.parseInt(st.nextToken());
-		V = Integer.parseInt(st.nextToken());
-		
-		map = new int[N + 1][N + 1];
-		
-		for (int i = 0; i < M; i++) {
-			st = new StringTokenizer(br.readLine());
-			int a = Integer.parseInt(st.nextToken());
-			int b = Integer.parseInt(st.nextToken());
-			map[a][b] = map[b][a] = 1;
-		}
-		
-		visited = new boolean[N + 1];
-		dfs(V);
-		sb.append("\n");
-		visited = new boolean[N + 1];
-		bfs(V);
-		System.out.println(sb.toString());
-	}
+    static int N, M, V;
+    static boolean[] visited;
+    static TreeSet<Integer> [] list;
+    static StringBuilder sb;
 
-	private static void bfs(int start) {
-		queue.offer(start);
-		visited[start] = true;
-		
-		while (!queue.isEmpty()) {
-			int current = queue.poll();
-			sb.append(current + " ");
-			
-			for (int i = 1; i <= N; i++) {
-				if (map[current][i] == 1 && !visited[i]) {
-					queue.offer(i);
-					visited[i] = true;
-				}
-			}
-		}
-	}
+    private static void dfs(int start) {
+        for (int i : list[start]) {
+            if (visited[i]) continue;
+            visited[i] = true;
+            sb.append(i + " ");
+            dfs(i);
+        }
+    }
 
-	private static void dfs(int start) {
-		Stack<Integer> stack = new Stack<>();
-		
-		stack.push(start);
-		visited[start] = true;
-		while (!stack.isEmpty()) {
-			int current = stack.pop();
-			sb.append(current + " ");
-			
-			for (int i = 1; i <= N ; i++) {
-				if (map[current][i] == 1 && !visited[i]) {
-					dfs(i);
-				}
-			}
-		}
-	}
+    private static void bfs(int start) {
+        visited = new boolean[N + 1];
+        Queue<Integer> q = new ArrayDeque<>();
+        q.offer(start);
 
+        while (!q.isEmpty()) {
+            int cur = q.poll();
+
+            if (visited[cur]) continue;
+            visited[cur] = true;
+            sb.append(cur + " ");
+
+            for (int i : list[cur]) {
+                if (!visited[i]) q.offer(i);
+            }
+        }
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        sb = new StringBuilder();
+
+        N = Integer.parseInt(st.nextToken());
+        M = Integer.parseInt(st.nextToken());
+        V = Integer.parseInt(st.nextToken());
+        visited = new boolean[N + 1];
+
+        list = new TreeSet[N + 1];
+        for (int i = 0; i < N + 1; i++) list[i] = new TreeSet<>();
+
+        for (int i = 0; i < M; i++) {
+            st = new StringTokenizer(br.readLine());
+            int from = Integer.parseInt(st.nextToken());
+            int to = Integer.parseInt(st.nextToken());
+            list[from].add(to);
+            list[to].add(from);
+        }
+
+        visited[V] = true;
+        sb.append(V + " ");
+        dfs(V);
+        sb.append("\n");
+        bfs(V);
+
+        System.out.println(sb.toString());
+    }
 }
