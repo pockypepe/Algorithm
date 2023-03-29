@@ -1,48 +1,41 @@
-import java.util.Scanner;
+import java.io.*;
+import java.util.*;
 
 public class Main {
-	static int N, r, c, cnt;
-	static int[] dr = {0, 0, 1, 0}, dc = {0, 1, -1, 1};
-	
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		N = (int) Math.pow(2, sc.nextInt());
-		r = sc.nextInt();
-		c = sc.nextInt();
-		
-		Z(0, 0, N);
-		
-		System.out.println(cnt - 1);
-	}
+    static int r, c, ans;
 
-	private static void Z(int x, int y, int size) {
-		int dir = 0;
-		if (size == 2) {
-			for (int i = 0; i < 4; i++) {
-				x += dr[dir];
-				y += dc[dir];
-				dir++;
-				cnt++;
-				if (x == r && y == c) return;
-			}
-		} else {
-			int half = size / 2;
-			if (x <= r && r < x + half && y <= c && c < y + half) {
-				cnt += 0;
-				Z(x, y, half);
-			}
-			else if (x <= r && r < x + half && y + half <= c && c < y + size) {
-				cnt += (int) Math.pow(half, 2);
-				Z(x, y + half, half);
-			}
-			else if (x + half <= r && r < x + size && y <= c && c < y + half) {
-				cnt += (int) Math.pow(half, 2) * 2;
-				Z(x + half, y, half);
-			}
-			else {
-				cnt += (int) Math.pow(half, 2) * 3;
-				Z(x + half, y + half, half);			
-			}
-		}
-	}
+    private static void diviedSection(int startR, int startC, int range, int nth) {
+        if (range == 1) {
+            if (startR == r && startC == c) ans = nth;
+            else if (startR == r && startC + 1 == c) ans = nth + 1;
+            else if (startR + 1 == r && startC == c) ans = nth + 2;
+            else ans = nth + 3;
+            return;
+        }
+
+        int next = (int) Math.pow(2, range - 1);
+        int sum = next * next;
+
+        if (r < startR + next && c < startC + next)
+            diviedSection(startR, startC, range - 1, nth);
+        else if (r < startR + next && c >= startC + next)
+            diviedSection(startR, startC + next, range - 1, nth + sum);
+        else if (r >= startR + next && c < startC + next)
+            diviedSection(startR + next, startC, range - 1, nth + sum * 2);
+        else
+            diviedSection(startR + next, startC + next, range - 1, nth + sum * 3);
+
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        int N = Integer.parseInt(st.nextToken());
+        r = Integer.parseInt(st.nextToken());
+        c = Integer.parseInt(st.nextToken());
+
+        diviedSection(0, 0, N, 0);
+
+        System.out.println(ans);
+    }
 }
