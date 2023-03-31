@@ -17,21 +17,17 @@ public class Main {
             }
         }
 
-        if (sum == 0) {
-            sb.append(0);
-            return;
+        if (sum == 0) sb.append(0);
+        else if (sum == n * n) sb.append(1);
+        else {
+            int newRange = n / 2;
+            sb.append("(");
+            makeSection(x, y, newRange);
+            makeSection(x, y + newRange, newRange);
+            makeSection(x + newRange, y, newRange);
+            makeSection(x + newRange, y + newRange, newRange);
+            sb.append(")");
         }
-        if (sum == n * n) {
-            sb.append(1);
-            return;
-        }
-        int newRange = n / 2;
-        sb.append("(");
-        makeSection(x, y, newRange);
-        makeSection(x, y + newRange, newRange);
-        makeSection(x + newRange, y, newRange);
-        makeSection(x + newRange, y + newRange, newRange);
-        sb.append(")");
     }
 
     public static void main(String[] args) throws IOException {
