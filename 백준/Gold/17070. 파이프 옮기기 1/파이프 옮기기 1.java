@@ -1,56 +1,52 @@
-import java.io.*;
-import java.util.*;
-/*
-    1. 큐에 시작점과 끝점의 좌표를 배열로 저장
-    2. 파이프의 방향이 어떤 방향이어도 대각선은 항상 체크
-    3. 조건에 따라 가로, 세로 체크
-    4. 만약 끝점이 목표점에 도달하면 1 증가
- */
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
+
 public class Main {
     static int N, ans;
-    static int[] dx = {1, 0, 1};
-    static int[] dy = {0, 1, 1};
     static int[][] map;
+    static int[][] dir = {
+            {0, 2}, // 가로 -> 가로 대각선
+            {1, 2}, // 세로 -> 세로 대각선
+            {0, 1, 2} // 대각선 -> 가로 세로 대각선
+    };
+    static int[][] way = {
+            {0, 1}, // 가로
+            {1, 0}, // 세로
+            {1, 1} // 대각선
+    };
 
-    private static void pipeMove(int x, int y, int dir) {
-        if (x == N - 1 && y == N - 1) {
+    private static void movePipe(int hx, int hy, int d) {
+        // 마지막 위치에 온다면
+        if (hx == N - 1 && hy == N - 1) {
             ans++;
             return;
         }
 
-        switch (dir) {
-            case 0 :
-                if (checkGaro(x, y)) pipeMove(x, y + 1, 0);
-                break;
-            case 1 :
-                if (checkSero(x, y)) pipeMove(x + 1, y, 1);
-                break;
-            case 2 :
-                if (checkGaro(x, y)) pipeMove(x, y + 1, 0);
-                if (checkSero(x, y)) pipeMove(x + 1, y, 1);
-                break;
-        }
-
-        if (checkCross(x, y)) pipeMove(x + 1, y + 1, 2);
-    }
-
-    private static boolean checkGaro(int x, int y) {
-        if (isInRange(x, y + 1) && map[x][y + 1] != 1) return true;
-        return false;
-    }
-
-    private static boolean checkSero(int x, int y) {
-        if (isInRange(x + 1, y) && map[x + 1][y] != 1) return true;
-        return false;
-    }
-    private static boolean checkCross(int x, int y) {
+        // 대각선 검사
+        int cnt = 0;
         for (int i = 0; i < 3; i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-            if (isInRange(nx, ny) && map[nx][ny] != 1) continue;
-            return false;
+            int nx = hx + way[i][0];
+            int ny = hy + way[i][1];
+            if (!isInRange(nx, ny) || map[nx][ny] == 1) cnt++;
         }
-        return true;
+        // 대각선 필요 조건이 된다면 대각선으로 이동
+        if (cnt == 0) movePipe(hx + 1, hy + 1, 2);
+
+        // 대각선 or 가로
+        if (d == 2 || d == 0) {
+            int nx = hx + way[0][0];
+            int ny = hy + way[0][1];
+            if (isInRange(nx, ny) && map[nx][ny] == 0) movePipe(nx, ny, 0);
+        }
+
+        // 대각선 or 세로
+        if (d == 2 || d == 1) {
+            int nx = hx + way[1][0];
+            int ny = hy + way[1][1];
+            if (isInRange(nx, ny) && map[nx][ny] == 0) movePipe(nx, ny, 1);
+        }
     }
 
     private static boolean isInRange(int nx, int ny) {
@@ -60,14 +56,16 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        ans = 0;
         map = new int[N][N];
         for (int i = 0; i < N; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < N; j++) map[i][j] = Integer.parseInt(st.nextToken());
+            for (int j = 0; j < N; j++) {
+                map[i][j] = Integer.parseInt(st.nextToken());
+            }
         }
-
-        pipeMove(0, 1, 0);
+        ans = 0;
+        // 파이프와 현재 방향
+        movePipe(0, 1, 0);
 
         System.out.println(ans);
     }
